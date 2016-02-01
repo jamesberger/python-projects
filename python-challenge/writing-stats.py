@@ -3,7 +3,19 @@ import sys
 import os
 from collections import Counter, defaultdict
 
-# A quick utility for gathering stats for writers from text input.
+''' 
+A quick utility for gathering stats for writers from text input.
+
+The utility will take text from the command line or from a file.
+
+Once it has text to work with, it will give the following stats:
+1. Word count
+2. Top ten most common words
+3. Frequency count for a user-specified word
+
+By: James Berger
+Last updated: February 1st 2016
+'''
 
 # A function to print out a menu
 def main_menu():
