@@ -1,7 +1,7 @@
 #!/usr/bin/env python27
 import sys
 import os
-from collections import Counter, defaultdict
+from collections import Counter
 
 ''' 
 A quick utility for gathering stats for writers from text input.
@@ -76,40 +76,24 @@ def writing_stats(content):
      # So we'll use str.format() here
      print '#{0}: \'{1}\' - occurs {2} times'.format(rank, *item)
      rank += 1
+
   # Let's see if they want to find how frequently a specific word shows up
   specificWordCheckDesired = raw_input('\nWould you like to check how frequently a specific word appears in the text? (y/n)  ')
   try:
     if specificWordCheckDesired == 'y':
-      specificWordCheck(content_list)
+      word_to_check = raw_input('\nWhich word would you like to get a frequency count for?\n')
+      # Using that handy counter library 
+      word_count = content_list.count(word_to_check)
+      
+      print '\nThe word \'%s\' occurs %d times in the supplied text.' % (word_to_check, word_count)
+      raw_input('\nPress any key to return to the main menu')
+      main_menu()
     elif specificWordCheckDesired == 'n':
-      pass  
+      main_menu()  
   except:
-   print('Bob That wasn\'t a \'y\' or a \'n\'. Please choose \'y\' or a \'n\'.')
-   raw_input()
-   os.system('clear')
-   writing_stats(content) 
-  pass
-
-def specificWordCheck(content_list):
-  os.system('clear')
-  text_to_check = content_list
-  word_to_check = raw_input('Which word would you like to get a frequency count for?\n')
-  print '\nChecking for \'%s\'...' % (word_to_check)
-  # word_count = 0
-  try:
-    for word_to_check in text_to_check:
-      word_count = word_count+line.count(word_to_check)
-     #word_count = defaultdict(list)
-    #for word_to_check in text_to_check:
-    #  word_count[word_to_check] += 1
-    # The variable word_to_check is a string, so we'll use %s, but word_count is an int, so we'll use %d string formatting operator here
-    print '\nThe word %s was found %d times in the supplied text' % (word_to_check, word_count)
-    raw_input('\nPress any key to return to the main menu.')
-    main_menu()
-  except:
-    raw_input('Well, that didn\'t go as planned. Press any key to return to the main menu.')
-    main_menu()
-  pass
+   print('Writing stats error:  That wasn\'t a \'y\' or a \'n\'. Please choose \'y\' or a \'n\'.')
+   #writing_stats(content) 
+   main_menu()
 
 def pasted_text():
   os.system('clear')
@@ -117,7 +101,6 @@ def pasted_text():
   pasted_text_content = raw_input('The text god demands text! Enter it below: \n')
   os.system('clear')
   writing_stats(pasted_text_content)
-  pass
 
 def file_text():
   os.system('clear')
