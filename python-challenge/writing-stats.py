@@ -74,7 +74,7 @@ def writing_stats(content):
   for item in topTen:
      # Printing nicely formatted tuples without the parens is painful
      # So we'll use str.format() here
-     print '#{0}: \'{1}\''.format(rank, *item)
+     print '#{0}: \'{1}\' - occurs {2} times'.format(rank, *item)
      rank += 1
   # Let's see if they want to find how frequently a specific word shows up
   specificWordCheckDesired = raw_input('\nWould you like to check how frequently a specific word appears in the text? (y/n)  ')
@@ -94,16 +94,21 @@ def specificWordCheck(content_list):
   os.system('clear')
   text_to_check = content_list
   word_to_check = raw_input('Which word would you like to get a frequency count for?\n')
-  print '\nChecking for %s...' % (word_to_check)
-  word_count = 0
-  #word_count = defaultdict(list)
-  #for word_to_check in text_to_check:
-  #  word_count[word_to_check] += 1
-
-  # The variable word_to_check is a string, so we'll use %s, but word_count is an int, so we'll use %d string formatting operator here
-  print '\nThe word %s was found %d times in the supplied text' % (word_to_check, word_count)
-  raw_input('\nPress any key to return to the main menu.')
-  main_menu()
+  print '\nChecking for \'%s\'...' % (word_to_check)
+  # word_count = 0
+  try:
+    for word_to_check in text_to_check:
+      word_count = word_count+line.count(word_to_check)
+     #word_count = defaultdict(list)
+    #for word_to_check in text_to_check:
+    #  word_count[word_to_check] += 1
+    # The variable word_to_check is a string, so we'll use %s, but word_count is an int, so we'll use %d string formatting operator here
+    print '\nThe word %s was found %d times in the supplied text' % (word_to_check, word_count)
+    raw_input('\nPress any key to return to the main menu.')
+    main_menu()
+  except:
+    raw_input('Well, that didn\'t go as planned. Press any key to return to the main menu.')
+    main_menu()
   pass
 
 def pasted_text():
