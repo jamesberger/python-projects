@@ -46,11 +46,14 @@ def editLogFile(logFile):
     # Get the system uptime
     uptime = subprocess.check_output('uptime')
 
+    # Get the system memory stats, pass in the -m flag to display it in megabytes
+    memoryStats = subprocess.check_output(['free','-m'])
+
     # Open our file in append mode
     workingFile = open(logFile, 'a')
   
     # Write some sample text to the file with a few \n line breaks
-    workingFile.write('\n'+ currentTime + ' - Current uptime is:'  + uptime)
+    workingFile.write('\n'+ currentTime + ' - Current uptime is:'  + uptime + '\nCurrent memory usage is:\n' + memoryStats)
 
     # Close our file
     workingFile.close()
