@@ -42,6 +42,11 @@ Last updated: Tuesday, May 31st 2016
 # Maybe something that does the equivalent of
 # 'watch -n2 cat /proc/sys/kernel/random/entropy_avail'.
 
+# We should also do some sort of estimate of how quickly the entropy pool fills
+# up, as we don't want to have the end user trying to generate a 200 character
+# long random string if the entropy pool only fills up 100 characters every 10
+# minutes or so.
+
 # We'll use the struct library to help decode our binary data into something
 # more usable
 import struct
