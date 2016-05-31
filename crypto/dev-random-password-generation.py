@@ -81,6 +81,12 @@ def translateRandomToAlpha():
     except:
         print ('Daaaaaamn son!')
 
+def entropyMeter():
+    # Build entropy meter functionality here
+
+def entropyPoolFillRate():
+    # Build entropy pool fill rate calculation functionality here
+
 if __name__ == "__main__":
     translateRandomToAlpha()
     sys.exit()
