@@ -49,7 +49,7 @@ Last updated: Tuesday, May 31st 2016
 
 # We'll use the struct library to help decode our binary data into something
 # more usable
-import struct
+import struct, sys
 
 def randomData():
   # We'll implement some basic error handling here with a try / except block.
@@ -64,3 +64,23 @@ def randomData():
   # entropy in /dev/random, but we'll put it here for the time being.
   except EOFError:
       print ('Ran into an end-of-file condition, see randomData function.')
+
+
+# This doesn't work right now, needs fixing.
+def translateRandomToAlpha():
+    try:
+        truly_random_source = open("/dev/random", 'rb')
+        outputString = ''
+        randomStringContents = ''
+        alphaNum = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        outputStringLength = 10
+        for i in range(outputStringLength):
+            randomContents = alphaNum[struct.unpack('I', truly_random_source.read(4))[0] % len(alphaNum)]
+            outputString += randomStringContents
+        print randomStringContents
+    except:
+        print ('Daaaaaamn son!')
+
+if __name__ == "__main__":
+    translateRandomToAlpha()
+    sys.exit()
