@@ -77,13 +77,13 @@ def entropyMeter():
   # Maybe something that does the equivalent of
   # 'watch -n2 cat /proc/sys/kernel/random/entropy_avail'.
   try:
-    available_entropy = open("/proc/sys/kernel/random/entropy_avail", "r")
-
+    available_entropy_value = open("/proc/sys/kernel/random/entropy_avail", "r")
+    available_entropy = available_entropy_value.read()
     return available_entropy
 
   except IOError:
-    print ('WARNING: IOError: Entropy meter can\'t run.')
-    print ('REASON: I wasn\'t able to read from /proc/sys/kernel/random/entropy_avail, are you running this on something other than a Linux box?')
+    print ('\n\nWARNING: IOError - Entropy meter function can\'t run. \nREASON: I wasn\'t able to read from /proc/sys/kernel/random/entropy_avail, are you running this on something other than a Linux box?')
+
 
 #def entropyPoolFillRate():
 
@@ -106,7 +106,7 @@ def translateRandomToAlpha():
     for item in range(string_length):
       temp_string = alpha_contents[struct.unpack('I', randomData())[0] % len(alpha_contents)]
       random_alpha_string += temp_string
-    print random_alpha_string
+    print ('\nYour random string is:\n\n'), random_alpha_string, ('\n')
     return random_alpha_string
 
   # Need to go through list of all possible exceptions to verify that we have an
@@ -130,13 +130,13 @@ if __name__ == "__main__":
   run_generator_choice = ''
 
   while not run_generator_choice in yes_answer or no_answer:
-    run_generator_choice = raw_input('Do you want to proceed? (yes/no) ').lower()
+    run_generator_choice = raw_input('Do you want to proceed? (y/n) ').lower()
 
     if run_generator_choice in yes_answer:
       translateRandomToAlpha()
       break
     elif run_generator_choice in no_answer:
-      print('Exiting...')
+      print('Exiting...\n')
       sys.exit()
     else:
       print('Please enter "y" or "n".')
