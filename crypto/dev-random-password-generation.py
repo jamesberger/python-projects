@@ -33,7 +33,7 @@ Fair warning:
 A "I'll roll my own crypto solution!" fool and his data are soon parted.
 
 Written by: James Berger
-Last updated: Tuesday, May 31st 2016
+Last updated: Tuesday, June 7th 2016
 '''
 
 # General note: We should also keep track of how much entropy is available,
@@ -56,6 +56,10 @@ def randomData():
   try:
     # Opening it as read only, binary, as we won't be writing to it.
     truly_random_source = open("/dev/random", 'rb')
+    # Struct requires a minimum length of 4 characters, so we'll use 4 here.
+    random_data_contents = truly_random_source.read(4)
+    return random_data_contents
+
   except BufferError:
       print ('Buffer error on opening /dev/random, see randomData function.')
   except EnvironmentError:
@@ -66,25 +70,38 @@ def randomData():
       print ('Ran into an end-of-file condition, see randomData function.')
 
 
-# This doesn't work right now, needs fixing.
 def translateRandomToAlpha():
-    try:
-        truly_random_source = open("/dev/random", 'rb')
-        outputString = ''
-        randomStringContents = ''
-        alphaNum = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        outputStringLength = 10
-        for i in range(outputStringLength):
-            randomContents = alphaNum[struct.unpack('I', truly_random_source.read(4))[0] % len(alphaNum)]
-            outputString += randomStringContents
-        print randomStringContents
-    except:
-        print ('Daaaaaamn son!')
+  # Users may want purely alphanumeric content, or they might want the extended
+  # character set, so we'll let them switch between the two by changing the
+  # variable alpha_contents. We need to improve this though, rather than having
+  # them manually change a variable.
+  alphabet_extended = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+  alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  alpha_contents = alphabet
 
-def entropyMeter():
+  random_string_length = 80
+  random_string = ''
+
+  try:
+    for item in range(random_string_length):
+      temp_string = alpha_contents[struct.unpack('I', randomData())[0] % len(alpha_contents)]
+      random_string += temp_string
+    print random_string
+
+  # Need to go through list of all possible exceptions to verify that we have an
+  # exception for everything that could possibly generate an exception.
+  except EnvironmentError:
+      print ('Ran into an IO error or OS error, see translateRandomToAlpha function.')
+  # Currently not certain if the EOF exception will fire if we run out of
+  # entropy in /dev/random, but we'll put it here for the time being.
+  except EOFError:
+      print ('Ran into an end-of-file condition, see translateRandomToAlpha function.')
+
+
+#def entropyMeter():
     # Build entropy meter functionality here
 
-def entropyPoolFillRate():
+#def entropyPoolFillRate():
     # Build entropy pool fill rate calculation functionality here
 
 if __name__ == "__main__":
