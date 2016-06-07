@@ -36,20 +36,10 @@ Written by: James Berger
 Last updated: Tuesday, June 7th 2016
 '''
 
-# General note: We should also keep track of how much entropy is available,
-# traditionally done with 'cat /proc/sys/kernel/random/entropy_avail'. It'd be
-# nice if we could display this in meter style graph for the end user.
-# Maybe something that does the equivalent of
-# 'watch -n2 cat /proc/sys/kernel/random/entropy_avail'.
-
-# We should also do some sort of estimate of how quickly the entropy pool fills
-# up, as we don't want to have the end user trying to generate a 200 character
-# long random string if the entropy pool only fills up 100 characters every 10
-# minutes or so.
-
 # We'll use the struct library to help decode our binary data into something
 # more usable
 import struct, sys
+
 
 def randomData():
   # We'll implement some basic error handling here with a try / except block.
@@ -61,22 +51,48 @@ def randomData():
     return random_data_contents
 
   except BufferError:
-      print ('Buffer error on opening /dev/random, see randomData function.')
+    print ('Buffer error on opening /dev/random, see randomData function.')
   except EnvironmentError:
-      print ('Ran into an IO error or OS error, see randomData function.')
+    print ('Ran into an IO error or OS error, see randomData function.')
   # Currently not certain if the EOF exception will fire if we run out of
   # entropy in /dev/random, but we'll put it here for the time being.
   except EOFError:
-      print ('Ran into an end-of-file condition, see randomData function.')
+    print ('Ran into an end-of-file condition, see randomData function.')
 
 
 def userDefinedVariables():
   alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   alphabet_extended = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
   desired_alphabet_type = alphabet
-  random_string_length = 80
+  random_string_length = 8
 
   return alphabet, alphabet_extended, desired_alphabet_type, random_string_length
+
+def entropyMeter():
+  # Note - this does not work on a Mac
+
+  # General note: We should also keep track of how much entropy is available,
+  # traditionally done with 'cat /proc/sys/kernel/random/entropy_avail'. It'd be
+  # nice if we could display this in meter style graph for the end user.
+  # Maybe something that does the equivalent of
+  # 'watch -n2 cat /proc/sys/kernel/random/entropy_avail'.
+  try:
+    available_entropy = open("/proc/sys/kernel/random/entropy_avail", "r")
+
+    return available_entropy
+
+  except IOError:
+    print ('WARNING: IOError: Entropy meter can\'t run.')
+    print ('REASON: I wasn\'t able to read from /proc/sys/kernel/random/entropy_avail, are you running this on something other than a Linux box?')
+
+#def entropyPoolFillRate():
+
+  # We should also do some sort of estimate of how quickly the entropy pool fills
+  # up, as we don't want to have the end user trying to generate a 200 character
+  # long random string if the entropy pool only fills up 100 characters every 10
+  # minutes or so.
+
+  # Build entropy pool fill rate calculation functionality here
 
 
 def translateRandomToAlpha():
@@ -96,19 +112,33 @@ def translateRandomToAlpha():
   # Need to go through list of all possible exceptions to verify that we have an
   # exception for everything that could possibly generate an exception.
   except EnvironmentError:
-      print ('Ran into an IO error or OS error, see translateRandomToAlpha function.')
+    print ('Ran into an IO error or OS error, see translateRandomToAlpha function.')
   # Currently not certain if the EOF exception will fire if we run out of
   # entropy in /dev/random, but we'll put it here for the time being.
   except EOFError:
-      print ('Ran into an end-of-file condition, see translateRandomToAlpha function.')
+    print ('Ran into an end-of-file condition, see translateRandomToAlpha function.')
 
-
-#def entropyMeter():
-    # Build entropy meter functionality here
-
-#def entropyPoolFillRate():
-    # Build entropy pool fill rate calculation functionality here
 
 if __name__ == "__main__":
-    translateRandomToAlpha()
-    sys.exit()
+
+  print('\n\nWelcome to the (truly) Random Password Generator\n')
+  print('The current amount of available entropy is: '), entropyMeter()
+  print('\nIf the available amount of entropy is less than 100, it may take quite a while to generate random data.')
+
+  yes_answer = ['yes','y']
+  no_answer = ['no', 'n']
+  run_generator_choice = ''
+
+  while not run_generator_choice in yes_answer or no_answer:
+    run_generator_choice = raw_input('Do you want to proceed? (yes/no) ').lower()
+
+    if run_generator_choice in yes_answer:
+      translateRandomToAlpha()
+      break
+    elif run_generator_choice in no_answer:
+      print('Exiting...')
+      sys.exit()
+    else:
+      print('Please enter "y" or "n".')
+
+  sys.exit()
