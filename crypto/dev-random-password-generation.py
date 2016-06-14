@@ -57,40 +57,13 @@ from stat import *
 
 
 def randomData():
-  # We'll implement some basic error handling here with a try / except block.
-
-  # We should make sure that the things we need for this to work actually exist
   try:
-    # We'll stat the device and get the device number
-    dev_random_device_number = os.stat("/dev/random").st_rdev
-    # Now we need to make sure it's a character device
-    if S_ISCHR(dev_random_device_number):
-      dev_random_device_exists = True
-
-      if dev_random_device_exists is True:
-        try:
-          # Opening it as read only, binary, as we won't be writing to it.
-          truly_random_source = open("/dev/random", 'rb')
-          # Struct requires a minimum length of 4 characters, so we'll use 4 here.
-          random_data_contents = truly_random_source.read(4)
-          return random_data_contents
-
-        except BufferError:
-          print ('Buffer error on opening /dev/random, see randomData function.')
-        except EnvironmentError:
-          print ('Ran into an IO error or OS error, see randomData function.')
-        # Currently not certain if the EOF exception will fire if we run out of
-        # entropy in /dev/random, but we'll put it here for the time being.
-        except EOFError:
-          print ('Ran into an end-of-file condition, see randomData function.')
-      else:
-        print ('I\'m unable to find /dev/random, is this running on something other than a Linux box?')
-
-    # If it's anything other than a character device, it doesn't exist for us
-    else:
-      dev_random_device_exists = False
-
-  except:
+    # Opening it as read only, binary, as we won't be writing to it.
+    truly_random_source = open("/dev/random", 'rb')
+    # Struct requires a minimum length of 4 characters, so we'll use 4 here.
+    random_data_contents = truly_random_source.read(4)
+    return random_data_contents
+  except IOError:
     print ('I\'m unable to find /dev/random, is this running on something other than a Linux box?')
 
 
