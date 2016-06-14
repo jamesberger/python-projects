@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 '''
-We need random data for some given cryptographic task. With Linux, we have two
-primary sources of entropy, /dev/random and /dev/urandom. Both of the two sources
-have good and bad aspects to them.
+We need random (as-is-possible with our source) data for some given task.
+With Linux, we have two primary sources of entropy, /dev/random and
+/dev/urandom. Both of the two sources have good and bad aspects to them, and
+both are backed by the same CSPRNG.
 
 The upside of /dev/random is that the data within is as truly random as you'll
 get without a hardware RNG.
@@ -10,14 +11,27 @@ get without a hardware RNG.
 The downside of /dev/random is when it runs out of entropy, your IO is blocked
 until the entropy pool starts to fill up again. If you're in the middle of
 gathering data, your application will stop until that pool fills, which can be
-less than ideal in most real-world situations.
+less than ideal in real-world situations.
 
-The upside of /dev/urandom is that there's never any IO blocking.
+The massive upside of /dev/urandom is that there's never any IO blocking. If our
+system is secure, an attacker cannot differentiate the output of the CSPRNG from
+true randomness if the initial seed is actually random.
 
-The downside of /dev/urandom is that while it's decent for most purposes, it
-does have one small issue. When it runs out of entropy, it starts generating
-pseudo-random data. This isn't the end of the world, as the Linux CSPRNG
-(Cryptographically secure pseudorandom number generator) is fairly solid.
+The downside of /dev/urandom is that while it's perfect for all real-world
+purposes, it does have one small issue - when it runs out of entropy, it starts
+generating pseudo-random data.
+
+This isn't the end of the world, as the Linux CSPRNG (Cryptographically secure
+pseudorandom number generator) is solid.
+
+An attacker would need perfect knowledge of the internal state of the CSPRNG to
+differentiate the output from actual randomness. In the real world, this is a
+non-issue - if an attacker could actually have  perfect knowledge of the
+internal state of the CSPRNG, the quality of randomness would be the least of
+your concerns.
+
+An imperfect analogy would be a person that is concerned about the quality of
+the locks on their house when the attackers are already inside the house.
 
 But why bother taking any risk at all if blocking IO isn't a major problem?
 
@@ -26,14 +40,14 @@ need random data, but they're all based on using /dev/urandom. Using the
 /dev/random pool instead is a little more painful, but definitely possible.
 
 This is intended to provide basic functionality that can be extended or adapted
-as needed. That said, this has not been audited by any professional
-cryptographers and is not indended for anything other than recreational use.
+as needed. That said, this should never be used for anything other than
+recreational use. It would be stupid to use it for any real-world thing.
 
 Fair warning:
 A "I'll roll my own crypto solution!" fool and his data are soon parted.
 
 Written by: James Berger
-Last updated: Tuesday, June 7th 2016
+Last updated: Tuesday, June 14th 2016
 '''
 
 # We'll use the struct library to help decode our binary data into something
@@ -76,6 +90,7 @@ def entropyMeter():
   # nice if we could display this in meter style graph for the end user.
   # Maybe something that does the equivalent of
   # 'watch -n2 cat /proc/sys/kernel/random/entropy_avail'.
+  # Note: We will need the value to be 64 or greater to read without blocking IO.
   try:
     available_entropy_value = open("/proc/sys/kernel/random/entropy_avail", "r")
     available_entropy = available_entropy_value.read()
