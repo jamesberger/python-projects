@@ -47,7 +47,7 @@ Fair warning:
 A "I'll roll my own crypto solution!" fool and his data are soon parted.
 
 Written by: James Berger
-Last updated: Tuesday, June 14th 2016
+Last updated: Tuesday, June 22nd 2016
 '''
 
 # We'll use the struct library to help decode our binary data into something
@@ -61,7 +61,9 @@ def randomData():
     # Opening it as read only, binary, as we won't be writing to it.
     truly_random_source = open("/dev/random", 'rb')
     # Struct requires a minimum length of 4 characters, so we'll use 4 here.
-    random_data_contents = truly_random_source.read(4)
+    #random_data_contents = truly_random_source.read(4)
+    # Trying reading just one byte
+    random_data_contents = truly_random_source.read(1)
     return random_data_contents
   except IOError:
     print ('I\'m unable to find /dev/random, is this running on something other than a Linux box?')
@@ -87,7 +89,8 @@ def entropyMeter():
   try:
     available_entropy_value = open("/proc/sys/kernel/random/entropy_avail", "r")
     available_entropy = available_entropy_value.read()
-    return available_entropy
+    # It's read in as a string, but as it's actually a number, we'll return it as an int.
+    return int(available_entropy)
 
   except IOError:
     print ('\n\nWARNING: IOError - Entropy meter function can\'t run. \nREASON: I wasn\'t able to read from /proc/sys/kernel/random/entropy_avail, are you running this on something other than a Linux box?')
@@ -111,13 +114,22 @@ def translateRandomToAlpha():
     string_length = userDefinedVariables()[3]
     alpha_contents = userDefinedVariables()[2]
 
-    for item in range(string_length):
-      temp_string = alpha_contents[struct.unpack('I', randomData())[0] % len(alpha_contents)]
+    '''for item in range(string_length):
+      #temp_string = alpha_contents[struct.unpack('I', randomData())[0] % len(alpha_contents)]
+      temp_string = alpha_contents[struct.unpack('B', randomData())[0] % len(alpha_contents)]
       random_alpha_string += temp_string
+    '''
+    # Changes to avoid burning up so much entropy, doesn't quite work yet
+    while True:
+      random_alpha_string = struct.unpack('B', randomData())
+      if random_alpha_string > (255 // len(alpha_contents)) * len(alpha_contents):
+        continue
+      random_alpha_string = random_alpha_string % len(alpha_contents)
+
     print ('\nYour random string is:\n\n'), random_alpha_string, ('\n')
     return random_alpha_string
 
-  # Need to go through list of all possible exceptions to verify that we have an
+  # Need to go through list of all possible exceptions to verify that we ha`ve an
   # exception for everything that could possibly generate an exception.
   except EnvironmentError:
     print ('Ran into an IO error or OS error, see translateRandomToAlpha function.')
@@ -130,7 +142,7 @@ def translateRandomToAlpha():
 if __name__ == "__main__":
 
   print('\n\nWelcome to the (truly) Random Password Generator\n')
-  print('The current amount of available entropy is: '), entropyMeter()
+  print('The current amount of available entropy is %d bits.') % (entropyMeter())
   print('\nIf the available amount of entropy is less than 100, it may take quite a while to generate random data.')
 
   yes_answer = ['yes','y']
