@@ -1,9 +1,20 @@
 #!/usr/bin/env python
 '''
-We need random (as-is-possible with our source) data for some given task.
-With Linux, we have two primary sources of entropy, /dev/random and
-/dev/urandom. Both of the two sources have good and bad aspects to them, and
-both are backed by the same CSPRNG.
+This is an entirely arm-chair, theoretical exercise with zero real world
+usefulness. Please do not take it for anything else.
+
+Do not use the Happy Fun Project for real-world applications.
+Do not taunt the Happy Fun Project.
+The Happy Fun Project contains a liquid core, which if exposed due to rupture,
+should not be touched, inhaled or looked at.
+The Happy Fun Project should be kept away from any real-world cryptographic
+projects. Failure to do so relieves its maker of any and all liability.
+
+Situation:
+We know /dev/urandom and /dev/random are both backed by the same
+CSPRNG (Cryptographically secure pseudorandom number generator), but for reasons
+unknown, we'd like our CSPRNG random seed updated as frequently as possible,
+and we don't want to use it if the seed hasn't been updated recently.
 
 The upside of /dev/random is that the data within is as truly random as you'll
 get without a hardware RNG.
@@ -18,11 +29,11 @@ system is secure, an attacker cannot differentiate the output of the CSPRNG from
 true randomness if the initial seed is actually random.
 
 The downside of /dev/urandom is that while it's perfect for all real-world
-purposes, it does have one small issue - when it runs out of entropy, it starts
-generating pseudo-random data.
+purposes, it does have one small issue - when it runs out of entropy, all
+pseudo-random data is generated using the last available seed.
 
 This isn't the end of the world, as the Linux CSPRNG (Cryptographically secure
-pseudorandom number generator) is solid.
+pseudorandom number generator) is indeed cryptographically secure.
 
 An attacker would need perfect knowledge of the internal state of the CSPRNG to
 differentiate the output from actual randomness. In the real world, this is a
@@ -38,10 +49,6 @@ But why bother taking any risk at all if blocking IO isn't a major problem?
 Python has a number of great libraries and functions for handling things that
 need random data, but they're all based on using /dev/urandom. Using the
 /dev/random pool instead is a little more painful, but definitely possible.
-
-This is intended to provide basic functionality that can be extended or adapted
-as needed. That said, this should never be used for anything other than
-recreational use. It would be stupid to use it for any real-world thing.
 
 Fair warning:
 A "I'll roll my own crypto solution!" fool and his data are soon parted.
