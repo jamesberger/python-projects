@@ -53,7 +53,6 @@ Last updated: Tuesday, June 22nd 2016
 # We'll use the struct library to help decode our binary data into something
 # more usable
 import struct, sys, os
-from stat import *
 
 
 def randomData():
