@@ -59,7 +59,7 @@ Last updated: Tuesday, June 22nd 2016
 
 # We'll use the struct library to help decode our binary data into something
 # more usable
-import struct, sys, os
+import struct, sys, os, time
 
 
 def randomData():
@@ -99,7 +99,9 @@ def entropyMeter():
     return int(available_entropy)
 
   except IOError:
-    print ('\n\nWARNING: IOError - Entropy meter function can\'t run. \nREASON: I wasn\'t able to read from /proc/sys/kernel/random/entropy_avail, are you running this on something other than a Linux box?')
+    pass
+    # we'll handle this error in main for now.
+    #print ('\n\nWARNING: IOError - Entropy meter function can\'t run. \nREASON: I wasn\'t able to read from /proc/sys/kernel/random/entropy_avail, are you running this on something other than a Linux box?')
 
 
 #def entropyPoolFillRate():
@@ -127,10 +129,10 @@ def translateRandomToAlpha():
     '''
     # Changes to avoid burning up so much entropy, doesn't quite work yet
     while True:
-      random_alpha_string = struct.unpack('B', randomData())
-      if random_alpha_string > (255 // len(alpha_contents)) * len(alpha_contents):
+      byte = struct.unpack('B', randomData())
+      if byte > (255 // len(alpha_contents)) * len(alpha_contents):
         continue
-      random_alpha_string = random_alpha_string % len(alpha_contents)
+      byte = byte % len(alpha_contents)
 
     print ('\nYour random string is:\n\n'), random_alpha_string, ('\n')
     return random_alpha_string
@@ -148,8 +150,17 @@ def translateRandomToAlpha():
 if __name__ == "__main__":
 
   print('\n\nWelcome to the (truly) Random Password Generator\n')
-  print('The current amount of available entropy is %d bits.') % (entropyMeter())
-  print('\nIf the available amount of entropy is less than 100, it may take quite a while to generate random data.')
+
+  # On a non-Linux box, we won't get a value from the entropy meter, and Python
+  # will throw an error here, so we'll do something different if the value for
+  # entropyMeter is NoneType.
+  if (entropyMeter() is None):
+    print """I'd tell you how much entropy you have to burn. But...
+I can't check the amount of entropy because I'm unable to read from /proc/sys/kernel/random/entropy_avail.
+Is this running on something other than a Linux box? If so, this may not work as desired. Or it might work just fine.\n\n"""
+  else:
+    print('The current amount of available entropy is %d bytes (max of 512).') % (entropyMeter())
+    print('\nIf the available amount of entropy is less than 100 bytes, it may take quite a while to generate random data. The maximum available amount of entropy is 512 bytes.')
 
   yes_answer = ['yes','y']
   no_answer = ['no', 'n']
