@@ -315,6 +315,15 @@ done
 
 echo -e $LINEBREAK
 
+# Here is an example until loop:
+
+# The until loop is fairly similar to the while loop, except it will run
+# "until" the test command executes successfully.
+# The loop will continue every time the test command fails.
+#
+# Example syntax, one line until loop:
+# until TEST-COMMAND; do CONSEQUENT-COMMANDS; done
+
 echo "Now we'll exit."
 
 echo -e $LINEBREAK
