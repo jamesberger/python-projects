@@ -54,6 +54,12 @@ echo -e $LINEBREAK
 # let "i+=1"
 # let "i++"
 
+# Decrementing the value of a variable:
+# The same as above, just substitute a - for the +
+# 
+# Example:
+# ((i--))
+
 
 # This will print your user name on the command line by referencing the
 # built in variable $USER. Variables are prefaced by the $ sign.
@@ -323,6 +329,16 @@ echo -e $LINEBREAK
 #
 # Example syntax, one line until loop:
 # until TEST-COMMAND; do CONSEQUENT-COMMANDS; done
+
+CARDS_IN_DECK=5
+
+until [ $CARDS_IN_DECK -lt 1 ]
+  do
+   echo -e "Number of cards in the deck: $CARDS_IN_DECK"
+   ((CARDS_IN_DECK--))
+done
+
+echo -e $LINEBREAK
 
 echo "Now we'll exit."
 
