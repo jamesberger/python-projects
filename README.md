@@ -11,6 +11,8 @@ This contains various example bits of Python code for working with the AWS boto3
 ### aws-secrets-manager.py
 This contains everything you need to get started with the AWS Secrets Manager Service and boto3.
 Notably, how to use boto3 to store a secret and retrieve a secret.
+This also shows how to use JSON to store a secret in key / value pairs, which was something that was not as well documented as I'd have liked.
+This is the solution to the 'The secret value can't be converted to key name and value pairs' error you may run into initially.
 
 ## cloudwatch-cli
 ### auth-test.py
