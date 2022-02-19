@@ -28,7 +28,9 @@ Author: James Berger
 Date: February 2022
 '''
 
+# Initial variables
 attempted_urls = 0
+download_directory = '/home/james/omega-manuals'
 output_file = '/home/james/github/python-projects/omega-manual-grabber/valid-urls.txt'
 url_prefix = 'https://assets.omega.com/manuals/M'
 url_postfix = '.pdf'
@@ -41,7 +43,7 @@ current_timestamp = datetime.now()
 with open(output_file, 'a+') as f:
     f.write('\n\n%s\n' % current_timestamp)
 
-for i in range(319,350):
+for i in range(100,5000):
     url_digits = str(i)
     url_to_check = (url_prefix + url_digits + url_postfix)
     
@@ -64,6 +66,6 @@ print(f'Checked {attempted_urls} urls, found {number_of_good_urls} good URLs.')
 
 print(valid_urls)
 
-# for url in list_of_urls:
-#     wget.download(url, out = output_directory)
+for url in valid_urls:
+    wget.download(url, out = download_directory)
 
