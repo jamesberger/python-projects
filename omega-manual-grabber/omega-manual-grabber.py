@@ -1,4 +1,6 @@
 import requests
+import wget
+from datetime import datetime
 
 '''
 Problem: I need a copy of the manual for my 1980s Omega CT40 darkroom timer.
@@ -27,13 +29,19 @@ Date: February 2022
 '''
 
 attempted_urls = 0
-list_of_urls = []
+output_file = '/home/james/github/python-projects/omega-manual-grabber/valid-urls.txt'
 url_prefix = 'https://assets.omega.com/manuals/M'
 url_postfix = '.pdf'
 url_digits = '0'
+valid_urls = []
 
+# To help distinguish the output when we have multiple runs of the script in a row during testing
+# let's write a time stamp as the first line of our output to the log.
+current_timestamp = datetime.now()
+with open(output_file, 'a+') as f:
+    f.write('\n\n%s\n' % current_timestamp)
 
-for i in range(4500,5000):
+for i in range(319,350):
     url_digits = str(i)
     url_to_check = (url_prefix + url_digits + url_postfix)
     
@@ -42,15 +50,20 @@ for i in range(4500,5000):
     try:
         site = requests.head(url_to_check)
         if site.status_code == 200:
-            #print(site.status_code)
-            list_of_urls.append(url_to_check)
+            valid_urls.append(url_to_check)
+            with open(output_file, 'a+') as f:
+                f.write('%s\n' % url_to_check)
+
     except requests.ConnectionError:
         print('Failed to connect')
 
-number_of_good_urls = len(list_of_urls)
+
+number_of_good_urls = len(valid_urls)
 
 print(f'Checked {attempted_urls} urls, found {number_of_good_urls} good URLs.')
 
+print(valid_urls)
 
-
+# for url in list_of_urls:
+#     wget.download(url, out = output_directory)
 
