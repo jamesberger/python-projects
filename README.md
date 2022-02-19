@@ -29,6 +29,11 @@ It's a terrible solution and I recommend you avoid implementing any part of it.
 ### fizzbuzz.py
 A very simple Python implementation of Fizz Buzz, which is a programming interview question equivalent of 'Please show us that you have the most rudimentary amount of programming ability'. You should only get this question during your first interview for your first real job.
 
+## Omega Manual Grabber
+I have a 1984 Omega CT-40 Darkroom Timer. While Omega the company is still in business, their website no longer lists the manuals for their legacy hardware products.
+However, they do have a ordered, unsorted collection of what appears to be a digitized manuals for every product they've ever made. There's no index page for these manuals,
+so this is a script to check through them and grab copies of the ones that exist so we can find the correct one for the darkroom timer.
+
 ## misc
 ### bar-graph.py
 I was lamenting the fact that Python didn't have a good method for outputting bar graphs to the command line,
