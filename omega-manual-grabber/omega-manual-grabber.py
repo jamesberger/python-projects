@@ -43,6 +43,7 @@ current_timestamp = datetime.now()
 with open(output_file, 'a+') as f:
     f.write('\n\n%s\n' % current_timestamp)
 
+# Checking for valid URLs and adding them to a list
 for i in range(100,5000):
     url_digits = str(i)
     url_to_check = (url_prefix + url_digits + url_postfix)
