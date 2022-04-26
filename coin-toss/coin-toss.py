@@ -24,7 +24,7 @@ while True:
             heads = False
             tails = True
         else:
-            print('What you typed made ZERO sense! You smell funny. Try again!')
+            print('\n\nWhat you typed made ZERO sense! You smell funny. Try again!')
 
     print('Tossing coin...')
     t_end = time.time() + 3
