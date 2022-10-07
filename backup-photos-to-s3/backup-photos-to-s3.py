@@ -12,6 +12,22 @@ import sys
 # If you have Pip installed, the command is 'pip3 install exif' minus the quotes.
 # Without the exif library, the script will just replicate the folder and file structure of the target directory you specify in the S3 bucket path you've selected.
 
+# Workflow:
+# - Verify that target directory, AWS credentials and target S3 bucket exist
+# - Build a list of all photos in the target directory and all subdirectories 
+# - Get the EXIF data from each of those photos
+#   - Store the photo taken date in a list with the photo path and filename
+# - Build a list of directories and what photos should go in those directories
+# - Check to see if any of those directories currently exist in the S3 bucket
+#   - If there are any directories that need to be created, create those directories in the S3 bucket
+# - Check to see if any of the photos in the list exist in the S3 bucket in the directories they should be in
+#   - If there's any photos that exist in both the source and destination directories, remove those photos from the list to be transfered
+# - For all photos that exist in the source directory or subdirectories but not in the S3 bucket, transfer those to the S3 bucket.
+# - Log any errors to a log file
+#   - If the log level is set to 'debug', log each operation and its result to the log file - directory, AWS credentials, S3 bucket, photos that exist locally, every S3 directory that is created, every photo that is transferred
+#   - If the log level is set to 'warn', log any directories that don't exist in the S3 bucket?
+#   - If the log level is set to 'info', log the end result - which directories were created in the S3 bucket, and which photos were transferred
+
 # Set your photo directory, S3 bucket path and path to your AWS credentials file here
 # Linux example:
 # target_directory = '/home/myuser/photos'
@@ -43,7 +59,7 @@ else:
     aws_credentials_valid = True
 
 # Check to see if S3 bucket exists if our AWS credential check succeeds
-if aws_credentials_valid = True:
+if aws_credentials_valid == True:
     response = client.head_bucket(
         Bucket = target_s3_bucket,
     )
