@@ -18,4 +18,36 @@ def add_item(item):
 
 
 
-    
+def get_todo_item():
+  # Get a todo item from user input
+  item = input("Enter something you need to do: ")
+
+  # Pass it to the add_item function
+  add_item(item)
+
+
+
+if __name__ == "__main__":
+   # Get a todo item from the user
+   get_todo_item()
+
+   add_another_item = input("Would you like to add another item? If so, type 'y': ")
+
+   while add_another_item == "y":
+     
+     get_todo_item()
+
+     add_another_item = input("Would you like to add another item? If so, type 'y': ")
+
+   else:
+      pass
+   
+
+   # DEBUG: Show contents of todo_items
+   print("Here are you to-do items: ")
+   for item in todo_items:
+      print(item)
+
+
+
+
