@@ -33,6 +33,7 @@ A very simple Python implementation of Fizz Buzz, which is a programming intervi
 ## Omega Manual Grabber
 ### minimal-omega-manual-grabber.py
 ### omega-manual-grabber.py
+### valid-urls.txt
 I have a 1984 Omega CT-40 Darkroom Timer. While Omega the company is still in business, their website no longer lists the manuals for their legacy hardware products.
 However, they do have an ordered, unsorted collection of what appears to be digitized manuals for every product they've ever made. There's no index page for these manuals,
 so this is a script to check through them and grab copies of the ones that exist so we can find the correct one for the darkroom timer.
@@ -43,9 +44,14 @@ I was lamenting the fact that Python didn't have a good method for outputting ba
 This was a quick and dirty example that was probably based on a Stack Overflow post somewhere.
 
 ## python-challenge
+### challenge-4-solution.py
+### challenge-4-stub-code.py
+### t
+### ts.txt
+### writing-stats.py
 When I was working at AWS, I needed to come up with a way to get new hires to get their feet wet with Python.
-I came up with a series of basic Python exercises, where I'd write some Python stub code that the new hires would elaborate on to solve a given problem.
-Sadly, I only saved the code from Challenge \#4.
+The result was a series of basic Python exercises, where I'd write some Python stub code that the new hires would elaborate on to solve a given problem.
+Sadly, I only saved the code from Challenge \#4 and for one other challenge that involved generating stats for written works - the word count, top ten most common words and the frequency count for a user-specified word.
 
 ## Ranked to-do list
 ### create-ranked-todo-list.py
