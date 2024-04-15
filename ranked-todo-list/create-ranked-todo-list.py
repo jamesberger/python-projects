@@ -9,11 +9,66 @@ Step 5: Print a ranked list of the to-do items.
 
 Stretch goal: Add functionality to import a list of to-do items from a .csv and export the re-ranked version to that same .csv or another
 
-Written by James Berger, last major update on 4/9/2024
+Written by James Berger, last major update on 4/15/2024
 """
+
+import csv
+import os
 
 # Create an empty dictionary for our data
 todo_items = {}
+
+def csv_create (filename, header):
+    # Create the CSV file with the specified filename and write the header
+    with open(filename, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(header)
+    print(f"CSV file '{filename}' created successfully.")
+
+
+def csv_read (filename):
+    # Read data from the CSV file and print it
+    with open(filename, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        print(f"Contents of {filename}:")
+        for row in csv_reader:
+            print(row)     
+
+
+def csv_select_file ():
+    # Get a list of all CSV files in the current directory
+    csv_files = [file for file in os.listdir() if file.endswith('.csv')]
+
+    # Check for condition where there are no .csv files
+    if not csv_files:
+        print("No .csv files found in the current directory.")
+        return None
+
+    # Present the list of .csv files to the user
+    print("Here are the .csv files in the current directory:")
+    for i, file in enumerate(csv_files, start=1):
+        print(f"{i}. {file}")
+
+    # Ask the user to select a .csv file
+    while True:
+        try:
+            choice = int(input("Enter the number of the .csv file you want to open: "))
+            if 1 <= choice <= len(csv_files):
+                return csv_files[choice - 1]
+            else:
+                print("Invalid choice. Please enter a number within the range.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+
+def csv_write (filename, data):
+    # Append data to the .csv file
+    with open(filename, 'a', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        for row in data:
+            csv_writer.writerow(row)
+    print("Data written to CSV file.")
+
 
 def get_todo_items():
     while True:
