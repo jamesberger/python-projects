@@ -34,13 +34,24 @@ def csv_create (filename):
         csv_writer = csv.writer(csvfile)
         csv_writer.writerow(['Task'] + ['Rank'])
     print(f"CSV file '{filename}' created successfully.")
+    selected_csv_file = filename
+    csv_menu(selected_csv_file)
 
 
 def csv_menu(selected_csv_file):
     while True:
         print('\n\nCREATE CSV MENU:')
         print('Currently selected CSV file: ', selected_csv_file)
-        csv_menu_option = input("\n\nSelect from the following:\n1. Create a new list\n2. Load an existing list\n3. Exit to the main menu\n> ")
+        print('\nSelect from the following:')
+        print('1. Create a new list')
+        print('2. Select and load an existing list')
+        print('3. Print contents of selected list')
+        print('4. Re-rank items in currently selected list')
+        print('5. Wipe all items in currently selected list, add new items and rank them')
+        print('6. Append items to currently selected list')
+        print('7. Exit to the main menu')
+        csv_menu_option = input('\n> ')
+
         if csv_menu_option == '1':
             raw_filename = input("\n\nWhat would you like to name your list?\n\nNotes:\n       Valid characters are 'A-Z', 'a-z', '0-9', '-', and '_'.\n       All files are saved with a .csv extension, no need to add it.\n> ")
             result = valid_filename_chars.match(raw_filename)
@@ -53,20 +64,25 @@ def csv_menu(selected_csv_file):
             selected_csv_file = csv_select_file()
             csv_print(selected_csv_file)
         elif csv_menu_option == '3':
-            break
+            csv_print(selected_csv_file)
+        elif csv_menu_option == '7':
+            main_menu()
         else:
-            print("\nPlease enter '1', '2' or '3'.")
+            print("\nPlease enter '1', '2', '3', '4', '5', '6', or '7'.")
 
 
-def csv_print(filename):
+def csv_print(selected_csv_file):
     # Read data from the CSV file and print it
-    with open(filename, 'r') as csvfile:
+    with open(selected_csv_file, 'r') as csvfile:
         csv_reader = csv.reader(csvfile)
 
-        print(f"Contents of {filename}:")
+        print(f"Contents of {selected_csv_file}:")
         for row in csv_reader:
             # Print the contents of an entire row on a single line
             print(', '.join(row))
+        input('Press any key to return to the CSV menu...\n')
+        csv_menu(selected_csv_file)
+    
 
 
 # def csv_read (filename):
