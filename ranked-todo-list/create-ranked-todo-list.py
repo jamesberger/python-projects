@@ -16,7 +16,7 @@ import csv
 import os
 import re
 
-# A regex to allow us to validate that a file name only contains alphanumeric characters (a-z, A-z, 0-9), underscores and dashes
+# A regex to allow us to validate that a file name only contains alphanumeric characters (a-z, A-Z, 0-9), underscores and dashes
 valid_filename_chars = re.compile('^[a-zA-Z0-9_-]+$')
 
 # Set the file extension and path
@@ -24,6 +24,9 @@ file_extension = '.csv'
 
 # Create an empty dictionary for our data
 todo_items = {}
+
+# Default value for selected CSV file
+selected_csv_file = 'None'
 
 def csv_create (filename):
     # Create the CSV file with the specified filename and write the header
@@ -33,30 +36,53 @@ def csv_create (filename):
     print(f"CSV file '{filename}' created successfully.")
 
 
+def csv_menu(selected_csv_file):
+    while True:
+        print('\n\nCREATE CSV MENU:')
+        print('Currently selected CSV file: ', selected_csv_file)
+        csv_menu_option = input("\n\nSelect from the following:\n1. Create a new list\n2. Load an existing list\n3. Exit to the main menu\n> ")
+        if csv_menu_option == '1':
+            raw_filename = input("\n\nWhat would you like to name your list?\n\nNotes:\n       Valid characters are 'A-Z', 'a-z', '0-9', '-', and '_'.\n       All files are saved with a .csv extension, no need to add it.\n> ")
+            result = valid_filename_chars.match(raw_filename)
+            if result  == None:
+                print("\n\nAn invalid character was present in the filename, please try again.")
+            else:
+                filename = raw_filename + file_extension
+                csv_create(filename)
+        elif csv_menu_option == '2':
+            selected_csv_file = csv_select_file()
+            csv_print(selected_csv_file)
+        elif csv_menu_option == '3':
+            break
+        else:
+            print("\nPlease enter '1', '2' or '3'.")
+
+
 def csv_print(filename):
     # Read data from the CSV file and print it
     with open(filename, 'r') as csvfile:
         csv_reader = csv.reader(csvfile)
 
-    print(f"Contents of {filename}:")
-    for row in csv_reader:
-         print(row)     
+        print(f"Contents of {filename}:")
+        for row in csv_reader:
+            # Print the contents of an entire row on a single line
+            print(', '.join(row))
 
 
-def csv_read (filename):
-    # Read data from the CSV file and return it
-    with open(filename, 'r') as csvfile:
-        csv_reader = csv.reader(csvfile)
+# def csv_read (filename):
+#     # Read data from the CSV file and return it
+#     with open(filename, 'r') as csvfile:
+#         csv_reader = csv.reader(csvfile)
 
-        # Do we need to actually do this?
-        # Maybe just return csv_reader
-        file_contents = csv_reader
+#         # Do we need to actually do this?
+#         # Maybe just return csv_reader
+#         file_contents = csv_reader
 
-        # DEBUG: Get type of csv_reader to verify 
-        # whether or not it's something we can safely return
-        print("The type of the variable csv_reader is:", type(csv_reader))
+#         # DEBUG: Get type of csv_reader to verify 
+#         # whether or not it's something we can safely return`   `
+#         print("The type of the variable csv_reader is:", type(csv_reader))
 
-    return file_contents
+#     return file_contents
 
 
 def csv_select_file ():
@@ -108,6 +134,38 @@ def get_todo_items():
             else:
                 print("Please enter 'y' or 'n'.")
 
+def main_menu():
+   # Clear the screen a bit and tell the user what this is
+   print('\n' * 5)
+   print('Welcome!\n\nThis will ask you for items on your to-do list, then ask you to rank each of those items vs all the other items.')
+   print('Once it has that, it will print a ranked list for you!')
+   print('-' * 115 + '\n')
+
+   while True:
+     print('MAIN MENU:\n\nWhich would you like to make:')
+     print('1. A quick, one-time use ranked to-do list')
+     print('2. A multiple use ranked to-do list that will be saved to a .csv')
+     print('3. Exit')
+
+     main_menu_option = input("\n> ")
+     
+     if main_menu_option == '1':
+       # Get a list of to-do items from the user
+       get_todo_items()
+       print("\n\nNow that we have all your to-do items, let's rank them: \n" + '-' * 55)
+       rank_items()
+       print('\nGoodbye!\n')
+       break
+     
+     elif main_menu_option == '2':
+        csv_menu(selected_csv_file)
+
+     elif main_menu_option == '3':
+        print("Goodbye!")
+        exit()
+     
+     else:
+       print("\nPlease enter '1', '2' or '3'.\n\n")
 
 def rank_items():
     compared_pairs = set()
@@ -134,46 +192,7 @@ def rank_items():
 
 
 if __name__ == "__main__":
-   # Clear the screen a bit and tell the user what this is
-   print('\n' * 5)
-   print("Welcome!\n\nThis will ask you for items on your to-do list, then ask you to rank each of those items vs all the other items.\n\nOnce it has that, it will print a ranked list for you!")
-   print('-' * 115 + '\n')
-
-   while True:
-     main_menu_option = input("\n\nMAIN MENU:\n\nWhich would you like to make:\n1. A quick, one-time use ranked to-do list\n2. A multiple use ranked to-do list that will be saved to a .csv\n3. Exit\n> ")
-     
-     if main_menu_option == '1':
-       # Get a list of to-do items from the user
-       get_todo_items()
-       print("\n\nNow that we have all your to-do items, let's rank them: \n" + '-' * 55)
-       rank_items()
-       print('\nGoodbye!\n')
-       break
-     
-     elif main_menu_option == '2':
-       while True:
-         csv_menu_option = input("\n\nCREATE CSV MENU:\n\nSelect from the following:\n1. Create a new list\n2. Load an existing list\n3. Exit to the main menu\n> ")
-         if csv_menu_option == '1':
-            raw_filename = input("\n\nWhat would you like to name your list?\n\nNotes:\n       Valid characters are 'A-Z', 'a-z', '0-9', '-', and '_'.\n       All files are saved with a .csv extension, no need to add it.\n> ")
-            result = valid_filename_chars.match(raw_filename)
-            if result  == None:
-                print("\n\nAn invalid character was present in the filename, please try again.")
-            else:
-                filename = raw_filename + file_extension
-                csv_create(filename)
-         elif csv_menu_option == '2':
-             print('Loading existing list still a work in progress.')
-         elif csv_menu_option == '3':
-             break
-         else:
-             print("\nPlease enter '1', '2' or '3'.")
-
-     elif main_menu_option == '3':
-        print("Goodbye!")
-        exit()
-     
-     else:
-       print("\nPlease enter '1', '2' or '3'.\n\n")
+  main_menu()
 
 
    
