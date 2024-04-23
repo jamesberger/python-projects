@@ -31,36 +31,37 @@ selected_csv_file = None
 
 def csv_append(selected_csv_file):
     if selected_csv_file is None:
-        input("No CSV file has been selected. Press any key to return to the menu.\n")
+        print("No CSV file has been selected.")
         return
 
-    # Load data from the selected CSV file
-    with open(selected_csv_file, 'r') as csvfile:
-        csv_reader = csv.reader(csvfile)
-
-        # Read the existing rows from the CSV file
-        rows = list(csv_reader)
+    # Load data from the selected CSV file if it exists
+    try:
+        with open(selected_csv_file, 'r') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            rows = list(csv_reader)
+    except FileNotFoundError:
+        rows = []
 
     while True:
         # Get the item to append from the user
-        new_item = input("Enter the item to append to each row or 'exit' to finish: ")
+        new_item = input("Enter the item to append to the CSV layout or 'exit' to finish: ")
         if new_item.lower() == 'exit':
             break
 
-        # Append the new item as the first item in each row
-        for row in rows:
-            row.insert(0, new_item)
+        # Append the new item with a default value of 0 to each row
+        rows.append([new_item, '0'])
 
         # Write the updated rows back to the CSV file
         with open(selected_csv_file, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerows(rows)
 
-        print(f"Item '{new_item}' appended as the first item in each row in '{selected_csv_file}'.")
+        print(f"Item '{new_item}' appended to the CSV layout in '{selected_csv_file}'.")
+        input("Press any key to continue.")
 
         # Ask the user if they want to append another item
-        choice = input("Do you want to append another item? (y/n): ")
-        if choice.lower() != 'y':
+        choice = input("Do you want to append another item? (yes/no): ")
+        if choice.lower() != 'yes':
             break
 
 
