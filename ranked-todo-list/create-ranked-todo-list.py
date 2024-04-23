@@ -26,7 +26,43 @@ file_extension = '.csv'
 todo_items = {}
 
 # Default value for selected CSV file
-selected_csv_file = 'None'
+selected_csv_file = None
+
+
+def csv_append(selected_csv_file):
+    if selected_csv_file is None:
+        input("No CSV file has been selected. Press any key to return to the menu.\n")
+        return
+
+    # Load data from the selected CSV file
+    with open(selected_csv_file, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile)
+
+        # Read the existing rows from the CSV file
+        rows = list(csv_reader)
+
+    while True:
+        # Get the item to append from the user
+        new_item = input("Enter the item to append to each row or 'exit' to finish: ")
+        if new_item.lower() == 'exit':
+            break
+
+        # Append the new item as the first item in each row
+        for row in rows:
+            row.insert(0, new_item)
+
+        # Write the updated rows back to the CSV file
+        with open(selected_csv_file, 'w', newline='') as csvfile:
+            csv_writer = csv.writer(csvfile)
+            csv_writer.writerows(rows)
+
+        print(f"Item '{new_item}' appended as the first item in each row in '{selected_csv_file}'.")
+
+        # Ask the user if they want to append another item
+        choice = input("Do you want to append another item? (y/n): ")
+        if choice.lower() != 'y':
+            break
+
 
 def csv_create (filename):
     # Create the CSV file with the specified filename and write the header
@@ -62,9 +98,12 @@ def csv_menu(selected_csv_file):
                 csv_create(filename)
         elif csv_menu_option == '2':
             selected_csv_file = csv_select_file()
-            csv_print(selected_csv_file)
         elif csv_menu_option == '3':
             csv_print(selected_csv_file)
+        elif csv_menu_option == '4':
+            csv_rank(selected_csv_file)
+        elif csv_menu_option == '6':
+            csv_append(selected_csv_file)
         elif csv_menu_option == '7':
             main_menu()
         else:
@@ -84,21 +123,37 @@ def csv_print(selected_csv_file):
         csv_menu(selected_csv_file)
     
 
+def csv_rank(selected_csv_file):
+    if selected_csv_file is None:
+        input("No CSV file has been selected. Press any key to return to the menu.")
+        return
 
-# def csv_read (filename):
-#     # Read data from the CSV file and return it
-#     with open(filename, 'r') as csvfile:
-#         csv_reader = csv.reader(csvfile)
+    # Load data from the selected CSV file
+    with open(selected_csv_file, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile)
+        
+        # Check if the CSV file has only one row (excluding the header)
+        num_rows = sum(1 for _ in csv_reader)
+        if num_rows <= 1:
+            input("The CSV file has no data aside from the header row. Please select a different CSV file. Press any key to continue.")
+            return
 
-#         # Do we need to actually do this?
-#         # Maybe just return csv_reader
-#         file_contents = csv_reader
+        # Reset the file pointer to the beginning
+        csvfile.seek(0)
 
-#         # DEBUG: Get type of csv_reader to verify 
-#         # whether or not it's something we can safely return`   `
-#         print("The type of the variable csv_reader is:", type(csv_reader))
+        # Skip the header row
+        next(csv_reader)
+        
+        # Extract todo items from each row
+        todo_items = {item.strip(): 0 for row in csv_reader for item in row}
 
-#     return file_contents
+    # Rank todo items
+    rank_items(todo_items)
+
+    # Print ranked todo items
+    print("\nRanked todo items:")
+    for item, rank in sorted(todo_items.items(), key=lambda x: x[1], reverse=True):
+        print(f"{item}: {rank}")
 
 
 def csv_select_file ():
