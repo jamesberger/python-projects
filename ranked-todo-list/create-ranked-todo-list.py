@@ -145,16 +145,23 @@ def csv_rank(selected_csv_file):
         # Skip the header row
         next(csv_reader)
         
-        # Extract todo items from each row
-        todo_items = {item.strip(): 0 for row in csv_reader for item in row}
+        # Initialize a list to store updated rows
+        updated_rows = []
 
-    # Rank todo items
-    rank_items(todo_items)
+        # Process each row and update the second column with a ranking score
+        for row in csv_reader:
+            task = row[0]  # Extract the task from the first column
+            rank = input(f"Enter the ranking score for '{task}': ")
+            row[1] = rank  # Update the second column with the ranking score
+            updated_rows.append(row)
 
-    # Print ranked todo items
-    print("\nRanked todo items:")
-    for item, rank in sorted(todo_items.items(), key=lambda x: x[1], reverse=True):
-        print(f"{item}: {rank}")
+    # Write the updated rows back to the CSV file
+    with open(selected_csv_file, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(['Task', 'Rank'])  # Rewrite the header row
+        csv_writer.writerows(updated_rows)
+
+    print(f"Ranking scores updated in '{selected_csv_file}'.")
 
 
 def csv_select_file ():
@@ -225,7 +232,7 @@ def main_menu():
        # Get a list of to-do items from the user
        get_todo_items()
        print("\n\nNow that we have all your to-do items, let's rank them: \n" + '-' * 55)
-       rank_items()
+       rank_items(todo_items)
        print('\nGoodbye!\n')
        break
      
@@ -239,7 +246,7 @@ def main_menu():
      else:
        print("\nPlease enter '1', '2' or '3'.\n\n")
 
-def rank_items():
+def rank_items(todo_items):
     compared_pairs = set()
     for item1 in todo_items:
         for item2 in todo_items:
