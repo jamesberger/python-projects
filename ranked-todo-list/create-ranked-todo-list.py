@@ -145,23 +145,11 @@ def csv_rank(selected_csv_file):
         # Skip the header row
         next(csv_reader)
         
-        # Initialize a list to store updated rows
-        updated_rows = []
+        # Extract todo items from each row
+        todo_items = {row[0].strip(): 0 for row in csv_reader}
 
-        # Process each row and update the second column with a ranking score
-        for row in csv_reader:
-            task = row[0]  # Extract the task from the first column
-            rank = input(f"Enter the ranking score for '{task}': ")
-            row[1] = rank  # Update the second column with the ranking score
-            updated_rows.append(row)
-
-    # Write the updated rows back to the CSV file
-    with open(selected_csv_file, 'w', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(['Task', 'Rank'])  # Rewrite the header row
-        csv_writer.writerows(updated_rows)
-
-    print(f"Ranking scores updated in '{selected_csv_file}'.")
+    # Rank todo items
+    rank_items(todo_items)
 
 
 def csv_select_file ():
